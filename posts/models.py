@@ -7,9 +7,13 @@ User = get_user_model()
 
 class Post(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Автор поста')
+    #title = models.CharField(max_length=100, verbose_name="Заголовок статьи")
     text = models.TextField(verbose_name='Текст поста')
     created_at = models.DateTimeField(auto_now_add=True)
-    category = models.ManyToManyField("Categories", blank=True)
+    category = models.ManyToManyField("Categories", blank=True, related_name='categories')
+
+    def __str__(self):
+        return str(self.author)
 
     
 
