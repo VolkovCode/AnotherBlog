@@ -1,19 +1,24 @@
 from django.db import models
 from django.contrib.auth import get_user_model
-from django.template.defaultfilters import slugify
+from transliterate import slugify
 
 User = get_user_model()
 
 
 class Post(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Автор поста')
-    #title = models.CharField(max_length=100, verbose_name="Заголовок статьи")
+    title = models.CharField(max_length=50, verbose_name="Заголовок статьи")
+    slug = models.SlugField(max_length=50, editable=False)
     text = models.TextField(verbose_name='Текст поста')
     created_at = models.DateTimeField(auto_now_add=True)
     category = models.ManyToManyField("Categories", blank=True, related_name='categories')
 
+    def save(self, *args, **kwargs):
+        self.slug = slugify(self.title)
+        super(Post, self).save(*args, **kwargs)
+
     def __str__(self):
-        return str(self.author)
+        return self.title
 
     
 

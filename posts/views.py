@@ -10,7 +10,15 @@ def index(request):
     cat = []
     for post in posts:
         for c in post.category.all():
-            cat.append(c.name)
+            cat.append(c.slug)
     print(cat)           
     template_name = 'posts/index.html'
     return render(request, template_name, context)
+
+
+def post(request, id, slug):
+    post = get_object_or_404(Post, pk=id)
+    context = {'post': post}
+    template = 'posts/post.html'
+    return render(request, template, context)
+

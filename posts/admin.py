@@ -4,7 +4,7 @@ from .models import Post, Categories
 
 @admin.register(Post)
 class PostAdmin(admin.ModelAdmin):
-    list_display = ['author', 'text', 'created_at']
+    list_display = ['id', 'author', 'title', 'slug', 'created_at']
     list_filter = ('created_at',)
 
 @admin.register(Categories)
