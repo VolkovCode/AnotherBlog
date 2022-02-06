@@ -1,9 +1,11 @@
-from multiprocessing import context
-from unicodedata import category
 from django.shortcuts import redirect, render
 from django.shortcuts import get_object_or_404
-from .models import Post, Categories
-from .forms import PostForm
+from .models import (Post, 
+                    Categories, 
+                    User, 
+                    Comment
+                    )
+from .forms import CommentForm, PostForm
 
 def index(request):
     posts = Post.objects.all().order_by('-created_at')
@@ -19,8 +21,15 @@ def index(request):
 
 def post(request, id, slug):
     post = get_object_or_404(Post, pk=id)
-    context = {'post': post}
+    
     template = 'posts/post.html'
+    form = CommentForm()
+    comments = Comment.objects.filter(post=post).order_by('-created_at')
+    context = {
+        'post': post,
+        'comments': comments,
+        'form': form,
+        }
     return render(request, template, context)
 
 def new_post(request):
@@ -36,4 +45,34 @@ def new_post(request):
             return redirect('index')
         return render(request, 'posts/new_post.html', {'form': form})        
     form = PostForm()
-    return render(request, 'posts/new_post.html', {'form': form}) 
+    return render(request, 'posts/new_post.html', {'form': form})
+
+def profile(request, username):
+    author = get_object_or_404(User, username=username)  
+    posts = Post.objects.filter(author=author)
+    context = {
+        'posts': posts,
+    }
+    template = 'posts/profile.html'
+    return render(request, template, context)
+
+def add_comment(request, slug, id):
+    post = get_object_or_404(Post, pk=id)
+    comments = Comment.objects.filter(post=post).order_by('-created_at')
+    if request.method == 'POST':
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.post = post
+            comment.author = request.user
+            comment.save()
+            return redirect('post', slug=post.slug, id=id)
+        return render(request, "posts/post.html", {'form': form, 'post':post})    
+    form = CommentForm()
+    return render(request, "posts/comment.html", {"post": post, "form": form, 'comments': comments})
+
+def delete_comment(request, slug, post_id, comment_id):
+    post = get_object_or_404(Post, pk=post_id)
+    comment = Comment.objects.filter(pk=comment_id)
+    comment.delete()
+    return redirect('post', slug=post.slug, id=post.id)
