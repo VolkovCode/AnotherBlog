@@ -1,6 +1,6 @@
 from django.shortcuts import redirect, render
 from django.shortcuts import get_object_or_404
-from .models import (Post, 
+from .models import (Follow, Post, 
                     Categories, 
                     User, 
                     Comment
@@ -76,3 +76,24 @@ def delete_comment(request, slug, post_id, comment_id):
     comment = Comment.objects.filter(pk=comment_id)
     comment.delete()
     return redirect('post', slug=post.slug, id=post.id)
+
+def follow(request, username):
+    author = get_object_or_404(User, username=username)
+    follow = Follow.objects.filter(follower=request.user, following=author)
+    print(follow)
+    if not follow:
+        Follow.objects.create(follower=request.user, following=author)
+        print(follow)
+        return redirect('profile', username)
+        
+    else:
+        return redirect('profile', username)    
+    Follow.objects.filter(follower=request.user, following=author).delete()
+    print(follow)
+    context = {
+        'follow': follow,
+    }
+    template = 'posts/profile.html'
+    return redirect('profile', username)
+
+

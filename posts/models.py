@@ -44,5 +44,7 @@ class Comment(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='Дата публикации')
     post = models.ForeignKey(Post, on_delete=models.CASCADE, blank=False, related_name='comments')
 
-#class Subscribe(models.Model):
- #   follower = models.ForeignKey(User, on_delete=models.CASCADE)
+
+class Follow(models.Model):
+    follower = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Подписчик', related_name='followers')
+    following = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Автор', related_name="followings")
