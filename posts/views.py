@@ -1,5 +1,6 @@
 from django.shortcuts import redirect, render
 from django.shortcuts import get_object_or_404
+from django.contrib.auth.decorators import login_required
 from .models import (Follow, Post, 
                     Categories, 
                     User, 
@@ -32,6 +33,7 @@ def post(request, id, slug):
         }
     return render(request, template, context)
 
+@login_required
 def new_post(request):
     user = request.user
     form = PostForm(request.POST or None, files=request.FILES or None)
@@ -54,10 +56,12 @@ def profile(request, username):
     context = {
         'posts': posts,
         'follow': follow,
+        'author': author,
     }
     template = 'posts/profile.html'
     return render(request, template, context)
 
+@login_required
 def add_comment(request, slug, id):
     post = get_object_or_404(Post, pk=id)
     comments = Comment.objects.filter(post=post).order_by('-created_at')
@@ -73,12 +77,14 @@ def add_comment(request, slug, id):
     form = CommentForm()
     return render(request, "posts/comment.html", {"post": post, "form": form, 'comments': comments})
 
+@login_required
 def delete_comment(request, slug, post_id, comment_id):
     post = get_object_or_404(Post, pk=post_id)
     comment = Comment.objects.filter(pk=comment_id)
     comment.delete()
     return redirect('post', slug=post.slug, id=post.id)
 
+@login_required
 def follow(request, username):
     author = get_object_or_404(User, username=username)
     follow = Follow.objects.filter(follower=request.user, following=author)
@@ -89,15 +95,8 @@ def follow(request, username):
         return redirect('profile', username)
     else:
         return redirect('profile', username)    
-    Follow.objects.filter(follower=request.user, following=author).delete()
-    print(follow)
-    context = {
-        'follow': follow,
-    }
-    template = 'posts/profile.html'
-    return redirect('profile', username)
 
-
+@login_required
 def unfollow(request, username):
     author = get_object_or_404(User, username=username)
     follow = Follow.objects.filter(follower=request.user, following=author)
