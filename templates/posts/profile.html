@@ -26,7 +26,11 @@
                 <div class="col-md-10 col-lg-8 col-xl-7">
                     <!-- Post preview-->
                     {% for post in posts %}
-                    <a href="{% url 'follow' post.author.username %}">Подписаться</a>
+                    {% if not follow %}
+                    <a class="btn btn-lg btn-light" href="{% url 'follow' post.author.username %}" role="button">Подписаться</a>
+                    {% else %}
+                    <a class="btn btn-lg btn-light" href="#" role="button">Отписаться</a>
+                    {% endif %}
                     <div class="post-preview">
                         <a href="{% url 'post' post.id post.slug %}">
                             <h2 class="post-title">{{ post.title }}</h2>

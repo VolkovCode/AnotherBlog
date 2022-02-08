@@ -50,8 +50,10 @@ def new_post(request):
 def profile(request, username):
     author = get_object_or_404(User, username=username)  
     posts = Post.objects.filter(author=author)
+    follow = Follow.objects.filter(follower=request.user, following=author)
     context = {
         'posts': posts,
+        'follow': follow,
     }
     template = 'posts/profile.html'
     return render(request, template, context)
@@ -85,7 +87,6 @@ def follow(request, username):
         Follow.objects.create(follower=request.user, following=author)
         print(follow)
         return redirect('profile', username)
-        
     else:
         return redirect('profile', username)    
     Follow.objects.filter(follower=request.user, following=author).delete()
@@ -95,5 +96,15 @@ def follow(request, username):
     }
     template = 'posts/profile.html'
     return redirect('profile', username)
+
+
+def unfollow(request, username):
+    author = get_object_or_404(User, username=username)
+    follow = Follow.objects.filter(follower=request.user, following=author)
+    if follow:
+        follow.delete()
+        return redirect('profile', username)
+    else:
+        return redirect('profile', username) 
 
 
