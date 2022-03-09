@@ -48,3 +48,7 @@ class Comment(models.Model):
 class Follow(models.Model):
     follower = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Подписчик', related_name='followers')
     following = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Автор', related_name="followings")
+
+class Like(models.Model):
+    liker = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Лайкнувший', related_name='likes')
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, verbose_name='Пост', related_name='posts')

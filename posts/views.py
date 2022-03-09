@@ -1,7 +1,9 @@
 from django.shortcuts import redirect, render
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.decorators import login_required
-from .models import (Follow, Post, 
+from .models import (Follow, 
+                    Like, 
+                    Post, 
                     Categories, 
                     User, 
                     Comment
@@ -10,12 +12,7 @@ from .forms import CommentForm, PostForm
 
 def index(request):
     posts = Post.objects.all().order_by('-created_at')
-    context = {'posts': posts}
-    cat = []
-    for post in posts:
-        for c in post.category.all():
-            cat.append(c.slug)
-    print(cat)           
+    context = {'posts': posts}         
     template_name = 'posts/index.html'
     return render(request, template_name, context)
 
@@ -106,4 +103,14 @@ def unfollow(request, username):
     else:
         return redirect('profile', username) 
 
-
+def like(request, slug, id):
+    #user = get_object_or_404(User, username=username)
+    post = get_object_or_404(Post, pk=id)
+    like = Like.objects.filter(liker = request.user, post = post)
+    if not like:
+        Like.objects.create(liker = request.user, post = post)
+        print(like)
+        return redirect('post', slug, id)
+    else:
+        return redirect('post', slug, id)
+        

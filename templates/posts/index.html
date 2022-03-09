@@ -38,6 +38,9 @@
                         {% for categ in post.category.all %}
                             <span><a class="btn btn-primary btn-sm text-lowcase" href="#!">{{ categ.name }}</a></span>
                         {% endfor %}
+                        
+                        <span><a class="btn btn-primary btn-sm text-lowcase" href="#!">Комментарии {{ post.comments.all.count }}</a></span>
+                        
                     </div>
                     <!-- Divider-->
                     <hr class="my-4" />
