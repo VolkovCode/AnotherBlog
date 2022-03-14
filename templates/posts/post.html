@@ -43,13 +43,15 @@
                     <div class="media mb-4">
                         <div class="media-body">
                             <h5 class="mt-0">
-                                <a href="{% url 'profile' request.user.username %}" name="comment_{{ item.id }}">
+                                <a href="{% url 'profile' item.author.username %}" name="comment_{{ item.id }}">
                                     {{ item.author.username }}</a>
                                     {{ item.created_at }}
                             </h5>
                             {{ item.text }}
-                            <a href="{% url 'delete_comment' post.id post.slug item.id %}">Удалить</a>
-                        </div>
+                            {% if request.user.username == item.author.username  %}
+                                <a href="{% url 'delete_comment' post.id post.slug item.id %}">Удалить</a>
+                            {% endif %}
+                            </div>
                     </div>
 
                     {% endfor %}

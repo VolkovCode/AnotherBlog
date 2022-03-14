@@ -20,5 +20,4 @@ urlpatterns = [
         delete_comment, name="delete_comment"),
     path('<str:username>/follow/', follow, name='follow'),
     path('<str:username>/unfollow/', unfollow, name='unfollow')
-
 ]

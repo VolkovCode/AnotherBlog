@@ -41,6 +41,8 @@ INSTALLED_APPS = [
     
     #мои приложения
     'posts.apps.PostsConfig',
+
+    'rest_framework',
 ]
 
 MIDDLEWARE = [

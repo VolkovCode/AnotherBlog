@@ -19,7 +19,6 @@ def index(request):
 
 def post(request, id, slug):
     post = get_object_or_404(Post, pk=id)
-    
     template = 'posts/post.html'
     form = CommentForm()
     comments = Comment.objects.filter(post=post).order_by('-created_at')
@@ -79,6 +78,8 @@ def delete_comment(request, slug, post_id, comment_id):
     post = get_object_or_404(Post, pk=post_id)
     comment = Comment.objects.filter(pk=comment_id)
     comment.delete()
+    if request.user.username != comment.author.username:
+        return redirect('post', slug=post.slug, id=post.id)        
     return redirect('post', slug=post.slug, id=post.id)
 
 @login_required
