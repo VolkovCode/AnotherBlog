@@ -41,7 +41,9 @@ INSTALLED_APPS = [
     
     #мои приложения
     'posts.apps.PostsConfig',
+    'api.apps.ApiConfig',
 
+    #сторонние
     'rest_framework',
 ]
 
